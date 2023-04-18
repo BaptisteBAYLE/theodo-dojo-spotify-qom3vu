@@ -20,28 +20,43 @@ const App = () => {
     setTrackIndex((trackIndex + 1) % 20);
   };
 
-  const { data: tracks } = useQuery({
+  const { data: tracks, isLoading } = useQuery({
     queryKey: ['tracks'],
     queryFn: fetchTracks,
   });
-  console.log(tracks?.length);
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1 className="App-title">Bienvenue sur le blind test</h1>
-      </header>
-      <div className="App-images">
-        <p>{tracks[trackIndex].track.name}</p>
-        <p>
-          <audio src={tracks[trackIndex].track.preview_url} autoPlay controls />
-        </p>
+
+  const AlbumCover = ({ currentTrack }) => {
+    const src = currentTrack.album.image.url; // A changer ;)
+    return <img src={src} style={{ width: 400, height: 400 }} />;
+  };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  } else {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1 className="App-title">Bienvenue sur le blind test</h1>
+        </header>
+
+        <div className="App-images">
+          <p>{tracks[trackIndex].track.name}</p>
+          <AlbumCover currentTrack={tracks[trackIndex]} />
+          <p>
+            <audio
+              src={tracks[trackIndex].track.preview_url}
+              autoPlay
+              controls
+            />
+          </p>
+        </div>
+        <div className="App-buttons">
+          <button onClick={goToNextTrack}>Next track</button>
+        </div>
       </div>
-      <div className="App-buttons">
-        <button onClick={goToNextTrack}>Next track</button>
-      </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default App;
